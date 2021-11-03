@@ -1,0 +1,29 @@
+#!/bin/bash
+sudo apt update
+#Install Util
+sudo apt -y install unzip
+#Install apache php
+sudo apt install -y apache2
+sudo apt install libapache2-mpm-itk
+sudo apt install -y php7.2
+sudo apt install -y php-mbstring php-gd php-curl php-xml php-mysql
+#Set Environment
+sudo sed -i 's/;date.timezone =/date.timezone = Asia\/Seoul/g' /etc/php/7.2/apache2/php.ini
+sudo sed -i 's/;date.timezone =/date.timezone = Asia\/Seoul/g' /etc/php/7.2/cli/php.ini
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/apache2/php.ini
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/cli/php.ini
+sudo service apache2 restart
+#Download Source Code
+sudo chown ubuntu:ubuntu /var/www/html
+sudo wget https://web-server-source.s3.ap-northeast-2.amazonaws.com/basic_php7.zip
+sudo mkdir /var/www/html/basic
+sudo unzip basic_php7.zip -d /var/www/html/basic
+sudo sed -i 's/>Security Solution/>KGGAME Web Server 1/g' /var/www/html/basic/index.php
+sudo wget https://web-server-source.s3.ap-northeast-2.amazonaws.com/index.html
+sudo cp index.html /var/www/html/
+sudo chmod 0777 /var/www/html/basic/data
+#Set DB Connection
+#Change string DBURL to Database Private DNS Endpoint
+sudo sed -i 's/dbaddress/DBURL/g' /var/www/html/basic/login/dbconn.php
+sudo service apache2 restart
+#sudo systemctl enable apache2.service
